@@ -15,15 +15,13 @@ class PasswordGenerator:
             numbers = [str(number) for number in range(0, 10)]
             features.append(numbers)
 
-        if self.has_uppercase or self.has_lowercase:
+        if self.has_uppercase:
+            uppercase = string.ascii_uppercase
+            features.append(uppercase)
 
-            if self.has_uppercase:
-                uppercase = string.ascii_uppercase
-                features.append(uppercase)
-
-            if self.has_lowercase:
-                lowercase = string.ascii_lowercase
-                features.append(lowercase)
+        if self.has_lowercase:
+            lowercase = string.ascii_lowercase
+            features.append(lowercase)
 
         return features
 
