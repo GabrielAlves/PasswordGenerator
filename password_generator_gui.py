@@ -1,113 +1,99 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import Menu
+
+from constants import *
 from classes.password_generator import PasswordGenerator
 
-# Creates and define window configuration
+class PasswordGeneratorView:
+    def __init__(self):
+        self.window = tk.Tk()
+        self.window.title(PROJECT_NAME)
+        self.window.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
+        self.window.resizable(False, False)
 
-win = tk.Tk()
-win.title("Password Generator")
-win.geometry("350x300")
-win.resizable(False, False)
+        self.create_menu()
 
-# Defines the size configuration of ScrolledText widget
+        self.form_frame = ttk.Frame(self.window)
+        self.form_frame.pack(padx = 70)
 
-scrolled_text_width = 30
-scrolled_text_height = 3
+        self.project_title = ttk.Label(self.form_frame, text = PROJECT_NAME, font = (FONT_FAMILY, PROJECT_TITLE_FONT_SIZE))
+        self.project_title.pack(pady = PROJECT_TITLE_PADDING_HEIGHT) 
 
-# Defines font configuration for texts
+        self.random_password_entry = ttk.Entry(self.form_frame, width = PASSWORD_ENTRY_WIDTH)
+        self.random_password_entry.pack(padx = PADDING_HEIGHT)
 
-font_family = "Comic Sans MS"
-font_size = 10
+        self.write_initial_message_on_password_entry()
 
-# Defines padding configuration
+        self.labelframe_with_password_options = ttk.LabelFrame(self.form_frame, text = "Options")
+        self.labelframe_with_password_options.pack(pady = PADDING_HEIGHT)
 
-padding_width = 5
-padding_height = 5
+        text_number_characters = ttk.Label(self.labelframe_with_password_options, text = "Number of characters", font = (FONT_FAMILY, FONT_SIZE))
+        text_number_characters.grid(column = 0, row = 0, sticky = tk.W)
 
-# Creates frame that wraps every widget
+        self.characters_number = tk.IntVar()
+        self.combo_box_characters_number = ttk.Combobox(self.labelframe_with_password_options, textvariable = self.characters_number, state = "readonly")
+        self.combo_box_characters_number["values"] = tuple(range(8, 17))
+        self.combo_box_characters_number.current(0)
+        self.combo_box_characters_number.grid(column = 0, row = 1, sticky = tk.W, padx = PADDING_HEIGHT)
+    
+        self.create_checkbuttons()
 
-frame = ttk.LabelFrame(win, text = "")
-frame.pack(padx = 70)
+        self.button_generate_password = ttk.Button(self.form_frame, text = BUTTON_TEXT, command = self.generate_password)
+        self.button_generate_password.pack(pady = PADDING_HEIGHT)
 
-# Creates title for the window and above it the entry where the password will be written
+    def generate_password(self):
+        num_chars = self.characters_number.get()
+        has_uppercase = self.value_checkbutton_uppercase.get()
+        has_lowercase = self.value_checkbutton_lowercase.get()
+        has_numbers = self.value_checkbutton_numbers.get()
 
-title_password_generator = ttk.Label(frame, text = "Password Generator", font = (font_family, 16))
-title_password_generator.pack(pady = padding_height * 2) 
+        password_generator = PasswordGenerator(num_chars, has_numbers, has_uppercase, has_lowercase)
+        random_password = password_generator.generate_password()
 
-entry_password = ttk.Entry(frame, width = 30)
-entry_password.insert(0, "Your password will be written here")
-entry_password.configure(state = "readonly")
-entry_password.pack(padx = 5)
+        self.change_password_on_entry(random_password)
 
-# Creates a labelframe wraping the features the generated password must have
+    def write_initial_message_on_password_entry(self):
+        self.random_password_entry.insert(0, INITIAL_MESSAGE_PASSWORD_ENTRY)
+        self.random_password_entry.configure(state = "readonly")
 
-labelframe_password_options = ttk.LabelFrame(frame, text = "Options")
-labelframe_password_options.pack(pady = padding_height)
+    def change_password_on_entry(self, random_password):
+        self.random_password_entry.configure(state = "normal")
+        self.random_password_entry.delete(0, 'end')
+        self.random_password_entry.insert(0, random_password)
+        self.random_password_entry.configure(state = "readonly")
 
-# Defines a combobox that defines the number of characters
+    def create_menu(self):
+        self.menu_bar = Menu(self.window)
+        self.window.configure(menu = self.menu_bar)
 
-text_number_characters = ttk.Label(labelframe_password_options, text = "Number of characters", font = (font_family, font_size))
-text_number_characters.grid(column = 0, row = 0, sticky = tk.W)
+        self.file_menu = Menu(self.menu_bar, tearoff = 0)
+        self.file_menu.add_command(label = "New", command = self.open_new_gui)
+        self.file_menu.add_command(label = "Exit", command = self.close_gui) # The exit item trigger the function that closes the self.windowdow
+        self.menu_bar.add_cascade(label = "File", menu = self.file_menu)
 
-number_characters = tk.IntVar()
-combo_box_number_characters = ttk.Combobox(labelframe_password_options, textvariable = number_characters, state = "readonly")
-combo_box_number_characters["values"] = (8, 9, 10, 11, 12, 13, 14, 15, 16)
-combo_box_number_characters.current(0)
-combo_box_number_characters.grid(column = 0, row = 1, sticky = tk.W, padx = 5)
+    def create_checkbuttons(self):
+        self.value_checkbutton_uppercase = tk.IntVar()
+        self.value_checkbutton_lowercase = tk.IntVar()
+        self.value_checkbutton_numbers = tk.IntVar()
 
-# Creates the checkbuttons for uppercase, lowercase and numbers features
+        values_checkbuttons = [self.value_checkbutton_uppercase, self.value_checkbutton_lowercase, self.value_checkbutton_numbers]
+        texts_checkbuttons = ["Include uppercase?", "Include lowercase?", "Include numbers?"]
+        
+        number_of_checkbuttons = len(values_checkbuttons) if len(values_checkbuttons) == len(texts_checkbuttons) else min(len(values_checkbuttons), len(texts_checkbuttons))
 
-value_check_button_uppercase = tk.IntVar()
-value_check_button_lowercase = tk.IntVar()
-value_check_button_numbers = tk.IntVar()
+        for i in range(number_of_checkbuttons):
+            checkbutton = tk.Checkbutton(self.labelframe_with_password_options, text = texts_checkbuttons[i], font = (FONT_FAMILY, FONT_SIZE), variable = values_checkbuttons[i])
+            checkbutton.grid(column = 0, row = 2 + i, sticky = tk.W)
 
-values_check_button = [value_check_button_uppercase, value_check_button_lowercase, value_check_button_numbers]
-texts_check_button = ["Include uppercase?", "Include lowercase?", "Include numbers?"]
+    def open_new_gui(self):
+        PasswordGeneratorView()
 
-for i in range(3):
-    check_button = tk.Checkbutton(labelframe_password_options, text = texts_check_button[i], font = (font_family, font_size), variable = values_check_button[i])
-    check_button.grid(column = 0, row = 2 + i, sticky = tk.W)
+    def close_gui(self):
+        self.window.quit()
+        self.window.destroy()
+        exit()
 
-# Selects the chose features and creates the password
-
-def generate_password():
-    num_chars = number_characters.get()
-    uppercase = value_check_button_uppercase.get()
-    lowercase = value_check_button_lowercase.get()
-    numbers = value_check_button_numbers.get()
-
-    password = PasswordGenerator(num_chars, numbers, uppercase, lowercase).generate_password()
-
-    change_password_on_entry(password)
-
-# Modifies the current password at entry widget
-
-def change_password_on_entry(password):
-    entry_password.configure(state = "normal")
-    entry_password.delete(0, 'end')
-    entry_password.insert(0, password)
-    entry_password.configure(state = "readonly")
-
-# Creates the button
-
-button_generate_password = ttk.Button(frame, text = "Generate password", command = generate_password)
-button_generate_password.pack(pady = padding_height)
-
-# Closes the window
-
-def _quit():
-    win.quit()
-    win.destroy()
-    exit()
-
-# Creates the menu bar
-
-menu_bar = Menu(win)
-win.configure(menu = menu_bar)
-
-file_menu = Menu(menu_bar, tearoff = 0)
-file_menu.add_command(label = "Exit", command = _quit) # The exit item trigger the function that closes the window
-menu_bar.add_cascade(label = "File", menu = file_menu)
-
-win.mainloop()
+if __name__ == "__main__":
+    password_generator_view = PasswordGeneratorView()
+    password_generator_view.window.mainloop()

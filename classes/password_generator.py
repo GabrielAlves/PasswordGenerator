@@ -29,7 +29,7 @@ class PasswordGenerator:
         features = self.list_password_features()
         
         if len(features) == 0:
-            return "Choose an option!"
+            return "Choose at least one feature!"
 
         if self.number_characters <= 0:
             return "Choose a valid length!"
@@ -37,12 +37,11 @@ class PasswordGenerator:
         if self.number_characters > 100:
             return "Choose a smaller length!"
 
-        chose_features = []
-
         # Keeps generating passwords until it has all the wanted features
         
         while True:
             password = ""
+            chose_features = []
 
             for i in range(self.number_characters):
                 feature = random.choice(features)
