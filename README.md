@@ -1,3 +1,3 @@
 # password-generator
 
-This application generates random passwords with chose features(number of characters, uppercase, lowercase and numbers).
+This application generates random passwords with chosen features(number of characters, uppercase, lowercase and numbers).
