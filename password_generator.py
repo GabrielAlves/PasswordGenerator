@@ -12,7 +12,7 @@ class PasswordGenerator:
         chosen_features_by_user = []
 
         if self.has_numbers:
-            list_of_numbers = [str(number) for number in range(0, 10)]
+            list_of_numbers = string.digits
             chosen_features_by_user.append(list_of_numbers)
 
         if self.has_uppercase:

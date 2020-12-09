@@ -110,7 +110,6 @@ class PasswordGeneratorView:
         random_generated_password = self.random_password_entry.get()
         self.window.clipboard_clear() 
         self.window.clipboard_append(random_generated_password)
-        
 
     def generate_password(self):
         num_chars = self.characters_number.get()
