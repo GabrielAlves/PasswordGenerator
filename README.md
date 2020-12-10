@@ -1,10 +1,10 @@
 # password-generator
 
-Generates random passwords with chosen features(number of characters, uppercase, lowercase and numbers).
+Generate random passwords with chosen features(number of characters, uppercase, lowercase and numbers).
 
 ## How to use 
 
-1. Git clone the repository : `git clone https://github.com/gabr-01/password-generator.git`
+1. Git clone the repository : `git clone https://github.com/gabrielaves/password-generator.git`
 2. Execute file *password_generator_gui.py*
 
 ## Some images
