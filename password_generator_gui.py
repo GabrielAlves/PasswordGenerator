@@ -28,6 +28,7 @@ class PasswordGeneratorView:
     
     def configure_window(self):
         self.window.title(PROJECT_NAME)
+        self.window.iconbitmap(self.window, WINDOW_ICON_PATH)
         self.window.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.window.resizable(False, False)
 
@@ -50,7 +51,7 @@ class PasswordGeneratorView:
 
     def create_formulary_frame(self):
         self.form_frame = ttk.Frame(self.window)
-        self.form_frame.pack(padx = 70)
+        self.form_frame.pack(padx = FORMULARY_FRAME_PADDING_WIDTH)
 
     def create_heading_label(self):
         self.heading_label = ttk.Label(self.form_frame, text = PROJECT_NAME, font = (FONT_FAMILY, HEADING_LABEL_FONT_SIZE))
@@ -71,14 +72,14 @@ class PasswordGeneratorView:
 
     def create_characters_number_label(self):
         self.characters_number_label = ttk.Label(self.labelframe_with_password_options, text = CHARACTERS_NUMBER_LABEL_TEXT, font = (FONT_FAMILY, FONT_SIZE))
-        self.characters_number_label.grid(column = 0, row = 0, sticky = tk.W)
+        self.characters_number_label.grid(column = 0, sticky = tk.W)
 
     def create_combo_box_with_characters_number_options(self):
         self.characters_number = tk.IntVar()
         self.combo_box_characters_number_options = ttk.Combobox(self.labelframe_with_password_options, textvariable = self.characters_number, state = "readonly")
-        self.set_values_range_for_characters_number_combo_box(8, 16)
+        self.set_values_range_for_characters_number_combo_box(SMALLEST_NUMBER_IN_CHARACTERS_NUMBER_OPTIONS, BIGGEST_NUMBER_IN_CHARACTERS_NUMBER_OPTIONS)
         self.combo_box_characters_number_options.current(0)
-        self.combo_box_characters_number_options.grid(column = 0, row = 1, sticky = tk.W, padx = PADDING_WIDTH)
+        self.combo_box_characters_number_options.grid(column = 0, sticky = tk.W, padx = PADDING_WIDTH)
 
     def set_values_range_for_characters_number_combo_box(self, smallest_value, biggest_value):
         self.combo_box_characters_number_options["values"] = tuple(range(smallest_value, biggest_value + 1))
@@ -86,17 +87,18 @@ class PasswordGeneratorView:
     def create_checkbuttons_with_password_options(self):
         self.value_checkbutton_uppercase = tk.IntVar()
         self.value_checkbutton_lowercase = tk.IntVar()
-        self.value_checkbutton_numbers = tk.IntVar()
+        self.value_checkbutton_digits = tk.IntVar()
+        self.value_checkbutton_special_chars = tk.IntVar()
 
-        values_checkbuttons = [self.value_checkbutton_uppercase, self.value_checkbutton_lowercase, self.value_checkbutton_numbers]
-        texts_checkbuttons = ["Include uppercase?", "Include lowercase?", "Include numbers?"]
+        values_checkbuttons = [self.value_checkbutton_digits, self.value_checkbutton_uppercase, self.value_checkbutton_lowercase, self.value_checkbutton_special_chars]
+        texts_checkbuttons = ["Include digits?", "Include uppercase?", "Include lowercase?", "Include special chars?"]
         
         # number_of_checkbuttons = len(values_checkbuttons) if len(values_checkbuttons) == len(texts_checkbuttons) else min(len(values_checkbuttons), len(texts_checkbuttons))
         number_of_checkbuttons = len(values_checkbuttons)
 
         for i in range(number_of_checkbuttons):
             checkbutton = tk.Checkbutton(self.labelframe_with_password_options, text = texts_checkbuttons[i], font = (FONT_FAMILY, FONT_SIZE), variable = values_checkbuttons[i])
-            checkbutton.grid(column = 0, row = 2 + i, sticky = tk.W)
+            checkbutton.grid(column = 0, sticky = tk.W)
 
     def create_password_generation_button(self):
         self.password_generation_button = ttk.Button(self.form_frame, text = PASSWORD_GENERATION_BUTTON_TEXT, command = self.generate_password)
@@ -115,9 +117,10 @@ class PasswordGeneratorView:
         num_chars = self.characters_number.get()
         has_uppercase = self.value_checkbutton_uppercase.get()
         has_lowercase = self.value_checkbutton_lowercase.get()
-        has_numbers = self.value_checkbutton_numbers.get()
+        has_digits = self.value_checkbutton_digits.get()
+        has_special_chars = self.value_checkbutton_special_chars.get()
 
-        password_generator = PasswordGenerator(num_chars, has_numbers, has_uppercase, has_lowercase)
+        password_generator = PasswordGenerator(num_chars, has_digits, has_uppercase, has_lowercase, has_special_chars)
         random_password = password_generator.generate_password()
 
         self.change_password_on_entry(random_password)
@@ -136,6 +139,9 @@ class PasswordGeneratorView:
         self.window.destroy()
         exit()
 
-if __name__ == "__main__":
+def run():
     password_generator_view = PasswordGeneratorView()
     password_generator_view.window.mainloop()
+
+if __name__ == "__main__":
+    run()

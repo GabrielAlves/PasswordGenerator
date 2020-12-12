@@ -2,18 +2,19 @@ import random
 import string
 
 class PasswordGenerator:
-    def __init__(self, number_of_chars, has_numbers, has_uppercase, has_lowercase):
+    def __init__(self, number_of_chars, has_digits, has_uppercase, has_lowercase, has_special_chars):
         self.number_of_chars = number_of_chars
-        self.has_numbers = has_numbers
+        self.has_digits = has_digits
         self.has_uppercase = has_uppercase
         self.has_lowercase = has_lowercase
+        self.has_special_chars = has_special_chars
 
     def list_password_features(self):
         chosen_features_by_user = []
 
-        if self.has_numbers:
-            list_of_numbers = string.digits
-            chosen_features_by_user.append(list_of_numbers)
+        if self.has_digits:
+            digits = string.digits
+            chosen_features_by_user.append(digits)
 
         if self.has_uppercase:
             uppercase_letters = string.ascii_uppercase
@@ -22,6 +23,10 @@ class PasswordGenerator:
         if self.has_lowercase:
             lowercase_letters = string.ascii_lowercase
             chosen_features_by_user.append(lowercase_letters)
+
+        if self.has_special_chars:
+            special_chars = string.punctuation
+            chosen_features_by_user.append(special_chars)
 
         return chosen_features_by_user
 
